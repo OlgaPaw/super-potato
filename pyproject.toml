@@ -1,0 +1,40 @@
+[tool.poetry]
+name = "rest_demo"
+version = "0.1.0"
+description = ""
+authors = ["OlgaPaw <olga.pawlowicz@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.78.0"
+uvicorn = "^0.17.6"
+
+[tool.poetry.dev-dependencies]
+pytest = "^7.1.2"
+mypy = "^0.961"
+isort = "^5.10.1"
+yapf = "^0.32.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.mypy]
+python_version = "3.10"
+ignore_missing_imports = true
+disallow_untyped_defs = true
+
+[[tool.mypy.overrides]]
+module = "*.tests.*"
+disallow_untyped_defs = false
+
+[tool.isort]
+line_length = 120
+multi_line_output = 3
+
+[tool.yapf]
+based_on_style = "facebook"
+column_limit = 120
+
+[tool.pytest.ini_options]
+junit_family = "xunit2"
