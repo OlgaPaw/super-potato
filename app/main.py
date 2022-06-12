@@ -1,11 +1,25 @@
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI
 
-from . import repository, services
+from .adapters import database, db_repository
+from .domain import services
 
 books_api = FastAPI()
 
-book_repository = repository.BookRepository()
-authors_repository = repository.AuthorRepository()
+
+def get_database() -> database.SessionLocal:
+    database_ = database.SessionLocal()
+    try:
+        yield database_
+    finally:
+        database_.close()
+
+
+def get_autor_repository(database_: database.SessionLocal = Depends(get_database)) -> db_repository.AuthorRepository:
+    return db_repository.AuthorRepository(database_)
+
+
+def get_book_repository(database_: database.SessionLocal = Depends(get_database)) -> db_repository.BookRepository:
+    return db_repository.BookRepository(database_)
 
 
 @books_api.get("/")
@@ -14,20 +28,29 @@ def home() -> dict:
 
 
 @books_api.get("/authors", response_model=list[services.Author])
-def list_authors() -> list[services.Author]:
-    return services.list_authors(authors_repository)
+def list_authors(
+    author_repository: db_repository.AuthorRepository = Depends(get_autor_repository),
+) -> list[services.Author]:
+    return services.list_authors(author_repository)
 
 
 @books_api.post("/authors", response_model=services.Author)
-def create_author(data: services.Author) -> services.Author:
-    return services.create_author(authors_repository, data)
+def create_author(
+    data: services.AuthorAPICreate,
+    author_repository: db_repository.AuthorRepository = Depends(get_autor_repository),
+) -> services.Author:
+    return services.create_author(author_repository, data)
 
 
 @books_api.get("/books", response_model=list[services.Book])
-def list_books() -> list[services.Book]:
+def list_books(book_repository: db_repository.BookRepository = Depends(get_book_repository)) -> list[services.Book]:
     return services.list_books(book_repository)
 
 
 @books_api.post("/books", response_model=services.Book)
-def create_book(data: services.Book) -> services.Book:
-    return services.create_book(book_repository, data)
+def create_book(
+    data: services.BookAPICreate,
+    book_repository: db_repository.BookRepository = Depends(get_book_repository),
+    author_repository: db_repository.AuthorRepository = Depends(get_autor_repository),
+) -> services.Book:
+    return services.create_book(author_repository, book_repository, data)

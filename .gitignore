@@ -4,3 +4,6 @@ __pycache__
 junit
 .coverage
 coverage.xml
+
+# sqlite
+*.db
