@@ -37,6 +37,10 @@ def test_create_author():
     assert len(response.json()) == 1
 
 
+def test_create_book_duplicated_name():
+    pass
+
+
 def test_empty_book_list():
     response = client.get('/books')
     assert response.status_code == 200
@@ -57,3 +61,11 @@ def test_create_book():
     response = client.get('/books')
     assert response.status_code == 200
     assert len(response.json()) == 1
+
+
+def test_create_book_no_author_exist():
+    pass
+
+
+def test_create_book_duplicated_title():
+    pass
