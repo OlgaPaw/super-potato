@@ -1,32 +1,38 @@
+# pylint: disable=redefined-outer-name
+
+import pytest
 from fastapi.testclient import TestClient
 
 from app.adapters.mem_repository import AuthorRepository, BookRepository
 from app.main import books_api, get_autor_repository, get_book_repository
 
-author_repo = AuthorRepository()
-book_repo = BookRepository()
+
+@pytest.fixture
+def autor_test_repository():
+    auth_repo = AuthorRepository()
+    return lambda: auth_repo
 
 
-def get_autor_test_repository():
-    return author_repo
+@pytest.fixture
+def book_test_repository():
+    book_repo = BookRepository()
+    return lambda: book_repo
 
 
-def get_book_test_repository():
-    return book_repo
+@pytest.fixture
+def client(book_test_repository, autor_test_repository):
+    books_api.dependency_overrides[get_autor_repository] = autor_test_repository
+    books_api.dependency_overrides[get_book_repository] = book_test_repository
+    return TestClient(books_api)
 
 
-books_api.dependency_overrides[get_autor_repository] = get_autor_test_repository
-books_api.dependency_overrides[get_book_repository] = get_book_test_repository
-client = TestClient(books_api)
-
-
-def test_empty_author_list():
+def test_empty_author_list(client):
     response = client.get('/authors')
     assert response.status_code == 200
     assert response.json() == []
 
 
-def test_create_author():
+def test_create_author(client):
     data = {"name": "Adam Mickiewicz"}
     response = client.post('/authors', json=data)
     assert response.status_code == 200
@@ -41,13 +47,13 @@ def test_create_book_duplicated_name():
     pass
 
 
-def test_empty_book_list():
+def test_empty_book_list(client):
     response = client.get('/books')
     assert response.status_code == 200
     assert response.json() == []
 
 
-def test_create_book():
+def test_create_book(client):
     author_data = {"name": "Adam Mickiewicz"}
     response = client.post('/authors', json=author_data)
     assert response.status_code == 200
