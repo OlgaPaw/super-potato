@@ -43,6 +43,19 @@ def test_create_author(client):
     assert len(response.json()) == 1
 
 
+def test_get_author(client):
+    data = {"name": "Adam Mickiewicz"}
+    response = client.post('/authors', json=data)
+
+    expected_data = {"name": "Adam Mickiewicz", "id": 0}
+    assert response.status_code == 200
+    assert response.json() == expected_data
+
+    response = client.get(f'/authors/{expected_data["id"]}')
+    assert response.status_code == 200
+    assert response.json() == expected_data
+
+
 def test_create_author_duplicated_name(client):
     data = {"name": "Adam Mickiewicz"}
     response = client.post('/authors', json=data)

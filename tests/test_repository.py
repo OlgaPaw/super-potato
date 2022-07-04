@@ -54,6 +54,13 @@ def test_create_author(author_repo):
     assert len(author_repo.list()) == 1
 
 
+def test_get_author(author_repo):
+    author = AuthorCreate(name="Juliusz Słowacki")
+    db_author = author_repo.add(author)
+
+    assert author_repo.get(db_author.id).name == "Juliusz Słowacki"
+
+
 def test_create_author_duplicate_name(author_repo):
     author = AuthorCreate(name="Juliusz Słowacki")
     author_repo.add(author)

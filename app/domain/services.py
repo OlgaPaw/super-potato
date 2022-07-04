@@ -80,3 +80,7 @@ def list_authors(author_repository: AuthorRepository) -> list[Author]:
 def create_author(author_repository: AuthorRepository, author: AuthorAPICreate) -> Author:
     author_ = AuthorCreate(name=author.name)
     return author_repository.add(author_)
+
+
+def get_author(author_repository: AuthorRepository, author_id: int) -> Author:
+    return author_repository.get(author_id)

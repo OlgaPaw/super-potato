@@ -47,6 +47,14 @@ def create_author(
         raise RequestValidationError([ErrorWrapper(ValueError(f"Invalid data: {str(err)}"), ("query", ))]) from err
 
 
+@books_api.get("/authors/{author_id}", response_model=services.Author)
+def get_author(
+    author_id: int,
+    author_repository: db_repository.AuthorRepository = Depends(get_autor_repository),
+) -> services.Author:
+    return services.get_author(author_repository, author_id)
+
+
 @books_api.get("/books", response_model=list[services.Book])
 def list_books(book_repository: db_repository.BookRepository = Depends(get_book_repository)) -> list[services.Book]:
     return services.list_books(book_repository)
