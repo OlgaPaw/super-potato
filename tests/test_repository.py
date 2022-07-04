@@ -5,7 +5,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
 from app.adapters import database, db_repository, mem_repository
-from app.domain.services import AuthorCreate, BookCreate
+from app.domain.services import AuthorCreate, BookCreate, RepositoryException
 
 
 @pytest.fixture
@@ -52,6 +52,13 @@ def test_create_author(author_repo):
     author = AuthorCreate(name="Juliusz Słowacki")
     author_repo.add(author)
     assert len(author_repo.list()) == 1
+
+
+def test_create_author_duplicate_name(author_repo):
+    author = AuthorCreate(name="Juliusz Słowacki")
+    author_repo.add(author)
+    with pytest.raises(RepositoryException):
+        author_repo.add(author)
 
 
 @pytest.mark.parametrize(

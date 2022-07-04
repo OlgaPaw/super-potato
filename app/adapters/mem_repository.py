@@ -4,6 +4,7 @@ from ..domain.services import Author, AuthorCreate
 from ..domain.services import AuthorRepository as AuthorRespositoryBase
 from ..domain.services import Book, BookCreate
 from ..domain.services import BookRepository as BookRespositoryBase
+from ..domain.services import RepositoryException
 
 
 @dataclass
@@ -26,6 +27,8 @@ class AuthorRepository(AuthorRespositoryBase):
 
     def add(self, author: AuthorCreate) -> Author:
         max_id = len(self.authors)
+        if author.name in [a.name for a in self.authors.values()]:
+            raise RepositoryException("Author name already exists")
         self.authors[max_id] = Author(name=author.name, id=max_id)
         return self.authors[max_id]
 

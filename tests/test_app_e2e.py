@@ -43,8 +43,13 @@ def test_create_author(client):
     assert len(response.json()) == 1
 
 
-def test_create_book_duplicated_name():
-    pass
+def test_create_author_duplicated_name(client):
+    data = {"name": "Adam Mickiewicz"}
+    response = client.post('/authors', json=data)
+    assert response.status_code == 200
+
+    response = client.post('/authors', json=data)
+    assert response.status_code == 422
 
 
 def test_empty_book_list(client):

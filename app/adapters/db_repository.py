@@ -1,9 +1,11 @@
 from dataclasses import dataclass
+from typing import Any, List
 
 from ..domain.services import Author, AuthorCreate
 from ..domain.services import AuthorRepository as AuthorRespositoryBase
 from ..domain.services import Book, BookCreate
 from ..domain.services import BookRepository as BookRespositoryBase
+from ..domain.services import RepositoryException
 from . import database
 
 
@@ -29,6 +31,8 @@ class BookRepository(BaseRepository, BookRespositoryBase):
 class AuthorRepository(BaseRepository, AuthorRespositoryBase):
     def add(self, author: AuthorCreate) -> Author:
         author = database.Author(name=author.name)
+        if self.filter(name=author.name):
+            raise RepositoryException("Author name already exists")
         self.database.add(author)
         self.database.commit()
         self.database.refresh(author)
@@ -36,6 +40,9 @@ class AuthorRepository(BaseRepository, AuthorRespositoryBase):
 
     def list(self) -> list[Author]:
         return self.database.query(database.Author).all()
+
+    def filter(self, **kwargs: dict[str, Any]) -> List[Author]:
+        return self.database.query(database.Author).filter_by(**kwargs).all()
 
     def get(self, pk: int) -> Author:
         author = self.database.get(database.Author, pk)

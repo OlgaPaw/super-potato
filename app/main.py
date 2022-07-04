@@ -1,4 +1,6 @@
 from fastapi import Depends, FastAPI
+from fastapi.exceptions import RequestValidationError
+from pydantic.error_wrappers import ErrorWrapper
 
 from .adapters import database, db_repository
 from .domain import services
@@ -39,7 +41,10 @@ def create_author(
     data: services.AuthorAPICreate,
     author_repository: db_repository.AuthorRepository = Depends(get_autor_repository),
 ) -> services.Author:
-    return services.create_author(author_repository, data)
+    try:
+        return services.create_author(author_repository, data)
+    except services.RepositoryException as err:
+        raise RequestValidationError([ErrorWrapper(ValueError(f"Invalid data: {str(err)}"), ("query", ))]) from err
 
 
 @books_api.get("/books", response_model=list[services.Book])

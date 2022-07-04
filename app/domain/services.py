@@ -39,6 +39,10 @@ class Book(BookCreate):
     id: int
 
 
+class RepositoryException(Exception):
+    """raised on failed Repository operation"""
+
+
 class BookRepository(Protocol):
     def add(self, book: BookCreate) -> Book:
         ...
