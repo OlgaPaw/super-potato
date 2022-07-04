@@ -61,6 +61,26 @@ def test_get_non_existing_author(client):
     assert response.status_code == 404
 
 
+def test_delete_author(client):
+    data = {"name": "Adam Mickiewicz"}
+    response = client.post('/authors', json=data)
+
+    expected_data = {"name": "Adam Mickiewicz", "id": 0}
+    assert response.status_code == 200
+    assert response.json() == expected_data
+
+    response = client.delete(f'/authors/{expected_data["id"]}')
+    assert response.status_code == 204
+
+    response = client.get(f'/authors/{expected_data["id"]}')
+    assert response.status_code == 404
+
+
+def test_delete_non_existing_author(client):
+    response = client.delete('/authors/0')
+    assert response.status_code == 404
+
+
 def test_create_author_duplicated_name(client):
     data = {"name": "Adam Mickiewicz"}
     response = client.post('/authors', json=data)

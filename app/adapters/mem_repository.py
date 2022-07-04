@@ -40,3 +40,7 @@ class AuthorRepository(AuthorRespositoryBase):
             return self.authors[pk]
         except KeyError as err:
             raise RepositoryException("Author not found") from err
+
+    def delete(self, pk: int) -> None:
+        author = self.get(pk)
+        del self.authors[author.id]

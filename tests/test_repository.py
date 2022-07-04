@@ -73,6 +73,20 @@ def test_get_non_existing_author(author_repo):
         author_repo.get(0)
 
 
+def test_delete_author(author_repo):
+    author = AuthorCreate(name="Juliusz Słowacki")
+    db_author = author_repo.add(author)
+
+    author_repo.delete(db_author.id)
+    with pytest.raises(RepositoryException):
+        author_repo.get(db_author.id)
+
+
+def test_delete_non_existing_author(author_repo):
+    with pytest.raises(RepositoryException):
+        author_repo.delete(0)
+
+
 @pytest.mark.parametrize(
     'author_repo, book_repo', [
         ('db_author_repo', 'db_book_repo'),

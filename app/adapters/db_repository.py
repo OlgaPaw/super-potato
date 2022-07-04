@@ -49,3 +49,10 @@ class AuthorRepository(BaseRepository, AuthorRespositoryBase):
         if not author:
             raise RepositoryException("Author not found")
         return Author.from_orm(author)
+
+    def delete(self, pk: int) -> None:
+        author = self.database.get(database.Author, pk)
+        if not author:
+            raise RepositoryException("Author not found")
+        self.database.delete(author)
+        self.database.commit()

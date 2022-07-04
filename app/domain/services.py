@@ -61,6 +61,9 @@ class AuthorRepository(Protocol):
     def get(self, pk: int) -> Author:
         ...
 
+    def delete(self, pk: int) -> None:
+        ...
+
 
 ### service methods
 def list_books(book_repository: BookRepository) -> list[Book]:
@@ -84,3 +87,7 @@ def create_author(author_repository: AuthorRepository, author: AuthorAPICreate) 
 
 def get_author(author_repository: AuthorRepository, author_id: int) -> Author:
     return author_repository.get(author_id)
+
+
+def delete_author(author_repository: AuthorRepository, author_id: int) -> None:
+    return author_repository.delete(author_id)

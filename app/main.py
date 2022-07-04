@@ -56,6 +56,17 @@ def get_author(
         raise HTTPException(status_code=404, detail="Item not found") from err
 
 
+@books_api.delete("/authors/{author_id}", status_code=204)
+def delete_author(
+    author_id: int,
+    author_repository: db_repository.AuthorRepository = Depends(get_autor_repository),
+) -> None:
+    try:
+        return services.delete_author(author_repository, author_id)
+    except services.RepositoryException as err:
+        raise HTTPException(status_code=404, detail="Item not found") from err
+
+
 @books_api.get("/books", response_model=list[services.Book])
 def list_books(book_repository: db_repository.BookRepository = Depends(get_book_repository)) -> list[services.Book]:
     return services.list_books(book_repository)
