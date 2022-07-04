@@ -54,6 +54,13 @@ def test_create_author(author_repo):
     assert len(author_repo.list()) == 1
 
 
+def test_create_author_duplicate_name(author_repo):
+    author = AuthorCreate(name="Juliusz Słowacki")
+    author_repo.add(author)
+    with pytest.raises(RepositoryException):
+        author_repo.add(author)
+
+
 def test_get_author(author_repo):
     author = AuthorCreate(name="Juliusz Słowacki")
     db_author = author_repo.add(author)
@@ -61,11 +68,9 @@ def test_get_author(author_repo):
     assert author_repo.get(db_author.id).name == "Juliusz Słowacki"
 
 
-def test_create_author_duplicate_name(author_repo):
-    author = AuthorCreate(name="Juliusz Słowacki")
-    author_repo.add(author)
+def test_get_non_existing_author(author_repo):
     with pytest.raises(RepositoryException):
-        author_repo.add(author)
+        author_repo.get(0)
 
 
 @pytest.mark.parametrize(

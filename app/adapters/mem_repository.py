@@ -36,4 +36,7 @@ class AuthorRepository(AuthorRespositoryBase):
         return list(self.authors.values())
 
     def get(self, pk: int) -> Author:
-        return self.authors[pk]
+        try:
+            return self.authors[pk]
+        except KeyError as err:
+            raise RepositoryException("Author not found") from err

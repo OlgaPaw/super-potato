@@ -56,6 +56,11 @@ def test_get_author(client):
     assert response.json() == expected_data
 
 
+def test_get_non_existing_author(client):
+    response = client.get('/authors/0')
+    assert response.status_code == 404
+
+
 def test_create_author_duplicated_name(client):
     data = {"name": "Adam Mickiewicz"}
     response = client.post('/authors', json=data)

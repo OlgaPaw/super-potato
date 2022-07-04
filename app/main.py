@@ -1,6 +1,4 @@
-from fastapi import Depends, FastAPI
-from fastapi.exceptions import RequestValidationError
-from pydantic.error_wrappers import ErrorWrapper
+from fastapi import Depends, FastAPI, HTTPException
 
 from .adapters import database, db_repository
 from .domain import services
@@ -44,7 +42,7 @@ def create_author(
     try:
         return services.create_author(author_repository, data)
     except services.RepositoryException as err:
-        raise RequestValidationError([ErrorWrapper(ValueError(f"Invalid data: {str(err)}"), ("query", ))]) from err
+        raise HTTPException(status_code=422, detail=f"Invalid data: {str(err)}") from err
 
 
 @books_api.get("/authors/{author_id}", response_model=services.Author)
@@ -52,7 +50,10 @@ def get_author(
     author_id: int,
     author_repository: db_repository.AuthorRepository = Depends(get_autor_repository),
 ) -> services.Author:
-    return services.get_author(author_repository, author_id)
+    try:
+        return services.get_author(author_repository, author_id)
+    except services.RepositoryException as err:
+        raise HTTPException(status_code=404, detail="Item not found") from err
 
 
 @books_api.get("/books", response_model=list[services.Book])

@@ -46,4 +46,6 @@ class AuthorRepository(BaseRepository, AuthorRespositoryBase):
 
     def get(self, pk: int) -> Author:
         author = self.database.get(database.Author, pk)
+        if not author:
+            raise RepositoryException("Author not found")
         return Author.from_orm(author)
