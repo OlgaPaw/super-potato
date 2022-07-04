@@ -1,6 +1,10 @@
 Run
 ===
 
+Requirements ::
+    python 3.10+
+    pip install poetry
+
 Start the project ::
 
     poetry install
