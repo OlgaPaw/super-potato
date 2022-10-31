@@ -1,6 +1,7 @@
-from typing import Protocol
+from typing import List
 
 from pydantic import BaseModel
+from typing_extensions import Protocol
 
 
 ### Interface definition for repository
@@ -47,7 +48,7 @@ class BookRepository(Protocol):
     def add(self, book: BookCreate) -> Book:
         ...
 
-    def list(self) -> list[Book]:
+    def list(self) -> List[Book]:
         ...
 
 
@@ -55,7 +56,7 @@ class AuthorRepository(Protocol):
     def add(self, author: AuthorCreate) -> Author:
         ...
 
-    def list(self) -> list[Author]:
+    def list(self) -> List[Author]:
         ...
 
     def get(self, pk: int) -> Author:
@@ -66,7 +67,7 @@ class AuthorRepository(Protocol):
 
 
 ### service methods
-def list_books(book_repository: BookRepository) -> list[Book]:
+def list_books(book_repository: BookRepository) -> List[Book]:
     return book_repository.list()
 
 
@@ -76,7 +77,7 @@ def create_book(author_repository: AuthorRepository, book_repository: BookReposi
     return book_repository.add(book_)
 
 
-def list_authors(author_repository: AuthorRepository) -> list[Author]:
+def list_authors(author_repository: AuthorRepository) -> List[Author]:
     return author_repository.list()
 
 

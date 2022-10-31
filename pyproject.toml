@@ -5,11 +5,12 @@ description = ""
 authors = ["OlgaPaw <olga.pawlowicz@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = "^3.10"
+python = "^3.7.2"
 fastapi = "^0.78.0"
 uvicorn = "^0.17.6"
 SQLAlchemy = "^1.4.37"
 alembic = "^1.8.0"
+typing-extensions = "^4.4.0"
 
 [tool.poetry.dev-dependencies]
 pytest = "^7.1.2"

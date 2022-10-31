@@ -7,3 +7,6 @@ coverage.xml
 
 # sqlite
 *.db
+
+# vscode
+.code

@@ -1,3 +1,5 @@
+from typing import List
+
 from fastapi import Depends, FastAPI, HTTPException
 
 from .adapters import database, db_repository
@@ -27,10 +29,10 @@ def home() -> dict:
     return {"Hello": "World"}
 
 
-@books_api.get("/authors", response_model=list[services.Author])
+@books_api.get("/authors", response_model=List[services.Author])
 def list_authors(
     author_repository: db_repository.AuthorRepository = Depends(get_autor_repository),
-) -> list[services.Author]:
+) -> List[services.Author]:
     return services.list_authors(author_repository)
 
 
@@ -67,8 +69,8 @@ def delete_author(
         raise HTTPException(status_code=404, detail="Item not found") from err
 
 
-@books_api.get("/books", response_model=list[services.Book])
-def list_books(book_repository: db_repository.BookRepository = Depends(get_book_repository)) -> list[services.Book]:
+@books_api.get("/books", response_model=List[services.Book])
+def list_books(book_repository: db_repository.BookRepository = Depends(get_book_repository)) -> List[services.Book]:
     return services.list_books(book_repository)
 
 

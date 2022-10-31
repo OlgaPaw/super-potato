@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, List
+from typing import Any, Dict, List
 
 from ..domain.services import Author, AuthorCreate
 from ..domain.services import AuthorRepository as AuthorRespositoryBase
@@ -23,7 +23,7 @@ class BookRepository(BaseRepository, BookRespositoryBase):
         self.database.refresh(book)
         return Book.from_orm(book)
 
-    def list(self) -> list[Book]:
+    def list(self) -> List[Book]:
         return self.database.query(database.Book).all()
 
 
@@ -38,10 +38,10 @@ class AuthorRepository(BaseRepository, AuthorRespositoryBase):
         self.database.refresh(author)
         return Author.from_orm(author)
 
-    def list(self) -> list[Author]:
+    def list(self) -> List[Author]:
         return self.database.query(database.Author).all()
 
-    def filter(self, **kwargs: dict[str, Any]) -> List[Author]:
+    def filter(self, **kwargs: Dict[str, Any]) -> List[Author]:
         return self.database.query(database.Author).filter_by(**kwargs).all()
 
     def get(self, pk: int) -> Author:
