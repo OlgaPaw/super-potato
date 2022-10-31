@@ -43,8 +43,8 @@ def create_author(
 ) -> services.Author:
     try:
         return services.create_author(author_repository, data)
-    except services.RepositoryException as err:
-        raise HTTPException(status_code=422, detail=f"Invalid data: {str(err)}") from err
+    except services.AuthorCreateException as err:
+        raise HTTPException(status_code=422, detail=str(err)) from err
 
 
 @books_api.get("/authors/{author_id}", response_model=services.Author)
@@ -54,7 +54,7 @@ def get_author(
 ) -> services.Author:
     try:
         return services.get_author(author_repository, author_id)
-    except services.RepositoryException as err:
+    except services.AuthorGetException as err:
         raise HTTPException(status_code=404, detail="Item not found") from err
 
 
@@ -65,7 +65,7 @@ def delete_author(
 ) -> None:
     try:
         return services.delete_author(author_repository, author_id)
-    except services.RepositoryException as err:
+    except services.AuthorDeleteException as err:
         raise HTTPException(status_code=404, detail="Item not found") from err
 
 

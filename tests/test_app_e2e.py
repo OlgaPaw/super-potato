@@ -59,6 +59,7 @@ def test_get_author(client):
 def test_get_non_existing_author(client):
     response = client.get('/authors/0')
     assert response.status_code == 404
+    assert response.json() == {"detail": "Item not found"}
 
 
 def test_delete_author(client):
@@ -74,11 +75,13 @@ def test_delete_author(client):
 
     response = client.get(f'/authors/{expected_data["id"]}')
     assert response.status_code == 404
+    assert response.json() == {"detail": "Item not found"}
 
 
 def test_delete_non_existing_author(client):
     response = client.delete('/authors/0')
     assert response.status_code == 404
+    assert response.json() == {"detail": "Item not found"}
 
 
 def test_create_author_duplicated_name(client):
@@ -88,6 +91,7 @@ def test_create_author_duplicated_name(client):
 
     response = client.post('/authors', json=data)
     assert response.status_code == 422
+    assert response.json() == {"detail": "Author name already exists"}
 
 
 def test_empty_book_list(client):
