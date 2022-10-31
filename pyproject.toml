@@ -35,6 +35,10 @@ disallow_untyped_defs = true
 module = "tests.*"
 disallow_untyped_defs = false
 
+[[tool.mypy.overrides]]
+module = "*.tests.*"
+disallow_untyped_defs = false
+
 [tool.isort]
 line_length = 120
 multi_line_output = 3

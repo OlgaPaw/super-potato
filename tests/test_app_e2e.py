@@ -116,8 +116,11 @@ def test_create_book(client):
     assert len(response.json()) == 1
 
 
-def test_create_book_no_author_exist():
-    pass
+def test_create_book_non_existing_author(client):
+    book_data = {"title": "Pan Tadeusz", "author_id": 0}
+    response = client.post('/books', json=book_data)
+    assert response.status_code == 422
+    assert response.json() == {'detail': 'Author not found'}
 
 
 def test_create_book_duplicated_title():

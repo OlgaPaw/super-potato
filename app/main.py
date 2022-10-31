@@ -80,4 +80,7 @@ def create_book(
     book_repository: db_repository.BookRepository = Depends(get_book_repository),
     author_repository: db_repository.AuthorRepository = Depends(get_autor_repository),
 ) -> services.Book:
-    return services.create_book(author_repository, book_repository, data)
+    try:
+        return services.create_book(author_repository, book_repository, data)
+    except services.BookCreateException as err:
+        raise HTTPException(status_code=422, detail=str(err)) from err

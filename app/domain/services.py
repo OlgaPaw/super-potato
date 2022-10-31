@@ -83,13 +83,20 @@ class AuthorDeleteException(BaseBookServiceException):
     """Raised when author delete failed."""
 
 
+class BookCreateException(BaseBookServiceException):
+    """Raised when book create failed."""
+
+
 ### service methods
 def list_books(book_repository: BookRepository) -> List[Book]:
     return book_repository.list()
 
 
 def create_book(author_repository: AuthorRepository, book_repository: BookRepository, book: BookAPICreate) -> Book:
-    author = author_repository.get(book.author_id)
+    try:
+        author = author_repository.get(book.author_id)
+    except RepositoryException as err:
+        raise BookCreateException(err) from err
     book_ = BookCreate(title=book.title, author=author)
     return book_repository.add(book_)
 
