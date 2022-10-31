@@ -1,5 +1,9 @@
 __pycache__
 
+#linters
+.mypy_cache
+.pytest_cache
+
 # pytest
 junit
 .coverage
@@ -10,3 +14,6 @@ coverage.xml
 
 # vscode
 .code
+
+# pycharm
+.idea
