@@ -19,7 +19,7 @@ class BookRepository(BaseRepository, BookRespositoryBase):
 
     def add(self, book: BookCreate) -> Book:
         if self.filter(title=book.title, author_id=book.author.id):
-            raise RepositoryException("Author name already exists")
+            raise RepositoryException("Book for this author and tittle alredy exists.")
 
         book = database.Book(title=book.title, author_id=book.author.id)
         self.database.add(book)
