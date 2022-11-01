@@ -94,6 +94,14 @@ def test_create_author_duplicated_name(client):
     assert response.json() == {"detail": "Author name already exists"}
 
 
+def test_update_author():
+    pass
+
+
+def test_partial_update_author():
+    pass
+
+
 def test_empty_book_list(client):
     response = client.get('/books')
     assert response.status_code == 200
@@ -137,3 +145,27 @@ def test_create_book_duplicated_title_same_author(client):
     response = client.post('/books', json=book_data)
     assert response.status_code == 422
     assert response.json() == {"detail": "Book for this author and tittle alredy exists."}
+
+
+def test_get_book():
+    pass
+
+
+def test_get_non_existing_book():
+    pass
+
+
+def test_delete_book():
+    pass
+
+
+def test_delete_non_existing_book():
+    pass
+
+
+def test_update_book():
+    pass
+
+
+def test_partial_update_book():
+    pass
