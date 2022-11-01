@@ -32,7 +32,7 @@ First run ::
 
 Start the project ::
 
-    poetry run uvicorn app.main:books_api --port 7777
+    poetry run uvicorn app.adapters.api.restapi_fastapi:books_api --port 7777
 
 Open your browser to: http://127.0.0.1:7777/docs
 

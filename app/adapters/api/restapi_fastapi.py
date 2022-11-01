@@ -2,8 +2,8 @@ from typing import List
 
 from fastapi import Depends, FastAPI, HTTPException
 
-from .adapters import database, db_repository
-from .domain import services
+from ...domain import services
+from ..data_storage import database, db_repository
 
 books_api = FastAPI()
 

@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.adapters import database, db_repository, mem_repository
+from app.adapters.data_storage import database, db_repository, mem_repository
 from app.domain.services import AuthorCreate, BookCreate, RepositoryException
 
 

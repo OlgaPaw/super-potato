@@ -3,8 +3,8 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from app.adapters.mem_repository import AuthorRepository, BookRepository
-from app.main import books_api, get_autor_repository, get_book_repository
+from app.adapters.api.restapi_fastapi import books_api, get_autor_repository, get_book_repository
+from app.adapters.data_storage.mem_repository import AuthorRepository, BookRepository
 
 
 @pytest.fixture

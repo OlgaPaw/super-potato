@@ -1,7 +1,7 @@
 import pytest
 
-from ....adapters.mem_repository import AuthorRepository as MemAuthorRepository
-from ....adapters.mem_repository import BookRepository as MemBookRepository
+from ....adapters.data_storage.mem_repository import AuthorRepository as MemAuthorRepository
+from ....adapters.data_storage.mem_repository import BookRepository as MemBookRepository
 from ...services import AuthorRepository, BookRepository
 
 

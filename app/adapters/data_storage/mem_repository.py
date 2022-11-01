@@ -1,11 +1,11 @@
 from dataclasses import dataclass, field
 from typing import Any, List
 
-from ..domain.services import Author, AuthorCreate
-from ..domain.services import AuthorRepository as AuthorRespositoryBase
-from ..domain.services import Book, BookCreate
-from ..domain.services import BookRepository as BookRespositoryBase
-from ..domain.services import RepositoryException
+from ...domain.services import Author, AuthorCreate
+from ...domain.services import AuthorRepository as AuthorRespositoryBase
+from ...domain.services import Book, BookCreate
+from ...domain.services import BookRepository as BookRespositoryBase
+from ...domain.services import RepositoryException
 
 
 @dataclass
