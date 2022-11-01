@@ -1,11 +1,18 @@
 import pytest
 
-from ....adapters.mem_repository import AuthorRepository as MemAuthorRepository
-from ....adapters.mem_repository import BookRepository as MemBookRepository
-from ...services import AuthorCreate, BookAPICreate, BookCreate, BookCreateException, create_book, list_books
+from ...services import (
+    AuthorCreate,
+    AuthorRepository,
+    BookAPICreate,
+    BookCreate,
+    BookCreateException,
+    BookRepository,
+    create_book,
+    list_books,
+)
 
 
-def test_create_book(test_author_repository: MemAuthorRepository, test_book_repository: MemBookRepository):
+def test_create_book(test_author_repository: AuthorRepository, test_book_repository: BookRepository):
     author = AuthorCreate(name="Juliusz Słowacki")
     db_author = test_author_repository.add(author)
 
@@ -14,7 +21,7 @@ def test_create_book(test_author_repository: MemAuthorRepository, test_book_repo
 
 
 def test_create_book_non_existing_author(
-    test_author_repository: MemAuthorRepository, test_book_repository: MemBookRepository
+    test_author_repository: AuthorRepository, test_book_repository: BookRepository
 ):
     book = BookAPICreate(title='Balladyna', author_id=1)
     with pytest.raises(BookCreateException, match='Author not found'):
@@ -22,7 +29,7 @@ def test_create_book_non_existing_author(
 
 
 def test_create_book_duplicated_author_title_not_allowed(
-    test_author_repository: MemAuthorRepository, test_book_repository: MemBookRepository
+    test_author_repository: AuthorRepository, test_book_repository: BookRepository
 ):
     author = AuthorCreate(name="Juliusz Słowacki")
     db_author = test_author_repository.add(author)
@@ -35,7 +42,7 @@ def test_create_book_duplicated_author_title_not_allowed(
 
 
 def test_create_book_same_title_different_author_allowed(
-    test_author_repository: MemAuthorRepository, test_book_repository: MemBookRepository
+    test_author_repository: AuthorRepository, test_book_repository: BookRepository
 ):
     author = AuthorCreate(name="Juliusz Słowacki")
     db_author = test_author_repository.add(author)
@@ -51,7 +58,7 @@ def test_create_book_same_title_different_author_allowed(
 
 
 def test_create_book_same_author_different_title_allowed(
-    test_author_repository: MemAuthorRepository, test_book_repository: MemBookRepository
+    test_author_repository: AuthorRepository, test_book_repository: BookRepository
 ):
     author = AuthorCreate(name="Juliusz Słowacki")
     db_author = test_author_repository.add(author)
@@ -63,7 +70,7 @@ def test_create_book_same_author_different_title_allowed(
     create_book(test_author_repository, test_book_repository, book)
 
 
-def test_book_list(test_author_repository: MemAuthorRepository, test_book_repository: MemBookRepository):
+def test_book_list(test_author_repository: AuthorRepository, test_book_repository: BookRepository):
     author = AuthorCreate(name="Juliusz Słowacki")
     db_author = test_author_repository.add(author)
 
@@ -77,7 +84,7 @@ def test_book_list(test_author_repository: MemAuthorRepository, test_book_reposi
     assert any(book.title == db_book2.title for book in books)
 
 
-def test_empty_book_list(test_book_repository: MemBookRepository):
+def test_empty_book_list(test_book_repository: BookRepository):
     books = list_books(test_book_repository)
     assert books == []
 
