@@ -2,7 +2,7 @@ from typing import List
 
 from fastapi import Depends, FastAPI, HTTPException
 
-from ...domain import services
+from ...domain import interfaces, services
 from ..data_storage import database, db_repository
 
 books_api = FastAPI()
@@ -29,29 +29,29 @@ def home() -> dict:
     return {"Hello": "World"}
 
 
-@books_api.get("/authors", response_model=List[services.DBAuthor])
+@books_api.get("/authors", response_model=List[interfaces.DBAuthor])
 def list_authors(
     author_repository: db_repository.AuthorRepository = Depends(get_autor_repository),
-) -> List[services.DBAuthor]:
+) -> List[interfaces.DBAuthor]:
     return services.list_authors(author_repository)
 
 
-@books_api.post("/authors", response_model=services.DBAuthor)
+@books_api.post("/authors", response_model=interfaces.DBAuthor)
 def create_author(
     data: services.AuthorCreate,
     author_repository: db_repository.AuthorRepository = Depends(get_autor_repository),
-) -> services.DBAuthor:
+) -> interfaces.DBAuthor:
     try:
         return services.create_author(author_repository, data)
     except services.AuthorCreateException as err:
         raise HTTPException(status_code=422, detail=str(err)) from err
 
 
-@books_api.get("/authors/{author_id}", response_model=services.DBAuthor)
+@books_api.get("/authors/{author_id}", response_model=interfaces.DBAuthor)
 def get_author(
     author_id: int,
     author_repository: db_repository.AuthorRepository = Depends(get_autor_repository),
-) -> services.DBAuthor:
+) -> interfaces.DBAuthor:
     try:
         return services.get_author(author_repository, author_id)
     except services.AuthorGetException as err:
@@ -69,17 +69,17 @@ def delete_author(
         raise HTTPException(status_code=404, detail="Item not found") from err
 
 
-@books_api.get("/books", response_model=List[services.DBBook])
-def list_books(book_repository: db_repository.BookRepository = Depends(get_book_repository)) -> List[services.DBBook]:
+@books_api.get("/books", response_model=List[interfaces.DBBook])
+def list_books(book_repository: db_repository.BookRepository = Depends(get_book_repository)) -> List[interfaces.DBBook]:
     return services.list_books(book_repository)
 
 
-@books_api.post("/books", response_model=services.DBBook)
+@books_api.post("/books", response_model=interfaces.DBBook)
 def create_book(
     data: services.BookCreate,
     book_repository: db_repository.BookRepository = Depends(get_book_repository),
     author_repository: db_repository.AuthorRepository = Depends(get_autor_repository),
-) -> services.DBBook:
+) -> interfaces.DBBook:
     try:
         return services.create_book(author_repository, book_repository, data)
     except services.BookCreateException as err:

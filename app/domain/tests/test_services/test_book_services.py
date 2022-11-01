@@ -1,7 +1,7 @@
 import pytest
 
-from ...interfaces import BookRepository, DBAuthorCreate, DBBookCreate
-from ...services import AuthorRepository, BookCreate, BookCreateException, create_book, list_books
+from ...interfaces import AuthorRepository, BookRepository, DBAuthorCreate, DBBookCreate
+from ...services import BookCreate, BookCreateException, create_book, list_books
 
 
 def test_create_book(test_author_repository: AuthorRepository, test_book_repository: BookRepository):
