@@ -29,29 +29,29 @@ def home() -> dict:
     return {"Hello": "World"}
 
 
-@books_api.get("/authors", response_model=List[services.Author])
+@books_api.get("/authors", response_model=List[services.DBAuthor])
 def list_authors(
     author_repository: db_repository.AuthorRepository = Depends(get_autor_repository),
-) -> List[services.Author]:
+) -> List[services.DBAuthor]:
     return services.list_authors(author_repository)
 
 
-@books_api.post("/authors", response_model=services.Author)
+@books_api.post("/authors", response_model=services.DBAuthor)
 def create_author(
-    data: services.AuthorAPICreate,
+    data: services.AuthorCreate,
     author_repository: db_repository.AuthorRepository = Depends(get_autor_repository),
-) -> services.Author:
+) -> services.DBAuthor:
     try:
         return services.create_author(author_repository, data)
     except services.AuthorCreateException as err:
         raise HTTPException(status_code=422, detail=str(err)) from err
 
 
-@books_api.get("/authors/{author_id}", response_model=services.Author)
+@books_api.get("/authors/{author_id}", response_model=services.DBAuthor)
 def get_author(
     author_id: int,
     author_repository: db_repository.AuthorRepository = Depends(get_autor_repository),
-) -> services.Author:
+) -> services.DBAuthor:
     try:
         return services.get_author(author_repository, author_id)
     except services.AuthorGetException as err:
@@ -69,17 +69,17 @@ def delete_author(
         raise HTTPException(status_code=404, detail="Item not found") from err
 
 
-@books_api.get("/books", response_model=List[services.Book])
-def list_books(book_repository: db_repository.BookRepository = Depends(get_book_repository)) -> List[services.Book]:
+@books_api.get("/books", response_model=List[services.DBBook])
+def list_books(book_repository: db_repository.BookRepository = Depends(get_book_repository)) -> List[services.DBBook]:
     return services.list_books(book_repository)
 
 
-@books_api.post("/books", response_model=services.Book)
+@books_api.post("/books", response_model=services.DBBook)
 def create_book(
-    data: services.BookAPICreate,
+    data: services.BookCreate,
     book_repository: db_repository.BookRepository = Depends(get_book_repository),
     author_repository: db_repository.AuthorRepository = Depends(get_autor_repository),
-) -> services.Book:
+) -> services.DBBook:
     try:
         return services.create_book(author_repository, book_repository, data)
     except services.BookCreateException as err:

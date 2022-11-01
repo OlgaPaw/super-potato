@@ -1,26 +1,20 @@
-from typing import Any, List
+from typing import List
 
 from pydantic import BaseModel
-from typing_extensions import Protocol
+
+from .interfaces import (
+    AuthorRepository,
+    BookRepository,
+    DBAuthor,
+    DBAuthorCreate,
+    DBBook,
+    DBBookCreate,
+    RepositoryException,
+)
 
 
-### Interface definition for repository
-class AuthorAPICreate(BaseModel):
-    name: str
-
-    class Config:
-        orm_mode = True
-
-
-class AuthorCreate(AuthorAPICreate):
-    pass
-
-
-class Author(AuthorCreate):
-    id: int
-
-
-class BookAPICreate(BaseModel):
+### Service models
+class BookCreate(BaseModel):
     title: str
     author_id: int
 
@@ -28,50 +22,11 @@ class BookAPICreate(BaseModel):
         orm_mode = True
 
 
-class BookCreate(BaseModel):
-    title: str
-    author: Author
+class AuthorCreate(BaseModel):
+    name: str
 
     class Config:
         orm_mode = True
-
-
-class Book(BookCreate):
-    id: int
-
-
-class RepositoryException(Exception):
-    """raised on failed Repository operation"""
-
-
-class BookRepository(Protocol):
-
-    def add(self, book: BookCreate) -> Book:
-        ...
-
-    def list(self) -> List[Book]:
-        ...
-
-    def filter(self, **kwargs: Any) -> List[Book]:
-        ...
-
-
-class AuthorRepository(Protocol):
-
-    def add(self, author: AuthorCreate) -> Author:
-        ...
-
-    def list(self) -> List[Author]:
-        ...
-
-    def get(self, pk: int) -> Author:
-        ...
-
-    def delete(self, pk: int) -> None:
-        ...
-
-    def filter(self, **kwargs: Any) -> List[Author]:
-        ...
 
 
 ### Service errors
@@ -96,32 +51,32 @@ class BookCreateException(BaseBookServiceException):
 
 
 ### service methods
-def list_books(book_repository: BookRepository) -> List[Book]:
+def list_books(book_repository: BookRepository) -> List[DBBook]:
     return book_repository.list()
 
 
-def create_book(author_repository: AuthorRepository, book_repository: BookRepository, book: BookAPICreate) -> Book:
+def create_book(author_repository: AuthorRepository, book_repository: BookRepository, book: BookCreate) -> DBBook:
     try:
         author = author_repository.get(book.author_id)
-        book_ = BookCreate(title=book.title, author=author)
+        book_ = DBBookCreate(title=book.title, author=author)
         return book_repository.add(book_)
     except RepositoryException as err:
         raise BookCreateException(err) from err
 
 
-def list_authors(author_repository: AuthorRepository) -> List[Author]:
+def list_authors(author_repository: AuthorRepository) -> List[DBAuthor]:
     return author_repository.list()
 
 
-def create_author(author_repository: AuthorRepository, author: AuthorAPICreate) -> Author:
-    author_ = AuthorCreate(name=author.name)
+def create_author(author_repository: AuthorRepository, author: AuthorCreate) -> DBAuthor:
+    author_ = DBAuthorCreate(name=author.name)
     try:
         return author_repository.add(author_)
     except RepositoryException as err:
         raise AuthorCreateException(err) from err
 
 
-def get_author(author_repository: AuthorRepository, author_id: int) -> Author:
+def get_author(author_repository: AuthorRepository, author_id: int) -> DBAuthor:
     try:
         return author_repository.get(author_id)
     except RepositoryException as err:

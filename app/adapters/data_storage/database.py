@@ -11,16 +11,16 @@ SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base: DeclarativeMeta = declarative_base()
 
 
-class Author(Base):
+class DBAuthor(Base):
     __tablename__ = "authors"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, unique=True, index=True)
 
-    books = relationship("Book", back_populates="author")
+    books = relationship("DBBook", back_populates="author")
 
 
-class Book(Base):
+class DBBook(Base):
     __tablename__ = "books"
     __table_args__ = (UniqueConstraint('title', 'author_id', name='book_author_title_unique'), )
 
@@ -28,4 +28,4 @@ class Book(Base):
     title = Column(String, index=True)
     author_id = Column(Integer, ForeignKey("authors.id"))
 
-    author = relationship("Author", back_populates="books")
+    author = relationship("DBAuthor", back_populates="books")

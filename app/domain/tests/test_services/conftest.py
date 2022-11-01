@@ -1,15 +1,14 @@
 import pytest
 
-from ....adapters.data_storage.mem_repository import AuthorRepository as MemAuthorRepository
-from ....adapters.data_storage.mem_repository import BookRepository as MemBookRepository
-from ...services import AuthorRepository, BookRepository
+from ....adapters.data_storage import mem_repository
+from ...interfaces import AuthorRepository, BookRepository
 
 
 @pytest.fixture
 def test_book_repository() -> BookRepository:
-    return MemBookRepository()
+    return mem_repository.BookRepository()
 
 
 @pytest.fixture
 def test_author_repository() -> AuthorRepository:
-    return MemAuthorRepository()
+    return mem_repository.AuthorRepository()

@@ -4,8 +4,8 @@ import pytest
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from app.adapters.data_storage import database, db_repository, mem_repository
-from app.domain.services import AuthorCreate, BookCreate, RepositoryException
+from ...domain.interfaces import DBAuthorCreate, DBBookCreate, RepositoryException
+from ..data_storage import database, db_repository, mem_repository
 
 
 @pytest.fixture
@@ -49,20 +49,20 @@ def book_repo(request):
 
 
 def test_create_author(author_repo):
-    author = AuthorCreate(name="Juliusz Słowacki")
+    author = DBAuthorCreate(name="Juliusz Słowacki")
     author_repo.add(author)
     assert len(author_repo.list()) == 1
 
 
 def test_create_author_duplicate_name(author_repo):
-    author = AuthorCreate(name="Juliusz Słowacki")
+    author = DBAuthorCreate(name="Juliusz Słowacki")
     author_repo.add(author)
     with pytest.raises(RepositoryException):
         author_repo.add(author)
 
 
 def test_get_author(author_repo):
-    author = AuthorCreate(name="Juliusz Słowacki")
+    author = DBAuthorCreate(name="Juliusz Słowacki")
     db_author = author_repo.add(author)
 
     assert author_repo.get(db_author.id).name == "Juliusz Słowacki"
@@ -74,7 +74,7 @@ def test_get_non_existing_author(author_repo):
 
 
 def test_delete_author(author_repo):
-    author = AuthorCreate(name="Juliusz Słowacki")
+    author = DBAuthorCreate(name="Juliusz Słowacki")
     db_author = author_repo.add(author)
 
     author_repo.delete(db_author.id)
@@ -95,10 +95,10 @@ def test_delete_non_existing_author(author_repo):
     indirect=True
 )
 def test_create_book(author_repo, book_repo):
-    author = AuthorCreate(name="Juliusz Słowacki")
+    author = DBAuthorCreate(name="Juliusz Słowacki")
     db_author = author_repo.add(author)
 
-    book = BookCreate(title='Balladyna', author=db_author)
+    book = DBBookCreate(title='Balladyna', author=db_author)
     book_repo.add(book)
     assert len(book_repo.list()) == 1
 
@@ -111,14 +111,14 @@ def test_create_book(author_repo, book_repo):
     indirect=True
 )
 def test_create_book_duplicated_author_title_not_allowed(author_repo, book_repo):
-    author = AuthorCreate(name="Juliusz Słowacki")
+    author = DBAuthorCreate(name="Juliusz Słowacki")
     db_author = author_repo.add(author)
 
-    book = BookCreate(title='Balladyna', author=db_author)
+    book = DBBookCreate(title='Balladyna', author=db_author)
     book_repo.add(book)
     assert len(book_repo.list()) == 1
 
-    book = BookCreate(title='Balladyna', author=db_author)
+    book = DBBookCreate(title='Balladyna', author=db_author)
     with pytest.raises(RepositoryException):
         book_repo.add(book)
 
@@ -131,17 +131,17 @@ def test_create_book_duplicated_author_title_not_allowed(author_repo, book_repo)
     indirect=True
 )
 def test_create_book_same_title_different_author_allowed(author_repo, book_repo):
-    author = AuthorCreate(name="Juliusz Słowacki")
+    author = DBAuthorCreate(name="Juliusz Słowacki")
     db_author = author_repo.add(author)
 
-    book = BookCreate(title='Balladyna', author=db_author)
+    book = DBBookCreate(title='Balladyna', author=db_author)
     book_repo.add(book)
     assert len(book_repo.list()) == 1
 
-    author = AuthorCreate(name="Adam Mickiewicz")
+    author = DBAuthorCreate(name="Adam Mickiewicz")
     db_author = author_repo.add(author)
 
-    book = BookCreate(title='Balladyna', author=db_author)
+    book = DBBookCreate(title='Balladyna', author=db_author)
     book_repo.add(book)
     assert len(book_repo.list()) == 2
 
@@ -154,13 +154,13 @@ def test_create_book_same_title_different_author_allowed(author_repo, book_repo)
     indirect=True
 )
 def test_create_book_same_author_different_tittle_allowed(author_repo, book_repo):
-    author = AuthorCreate(name="Juliusz Słowacki")
+    author = DBAuthorCreate(name="Juliusz Słowacki")
     db_author = author_repo.add(author)
 
-    book = BookCreate(title='Balladyna 1', author=db_author)
+    book = DBBookCreate(title='Balladyna 1', author=db_author)
     book_repo.add(book)
     assert len(book_repo.list()) == 1
 
-    book = BookCreate(title='Balladyna 2', author=db_author)
+    book = DBBookCreate(title='Balladyna 2', author=db_author)
     book_repo.add(book)
     assert len(book_repo.list()) == 2

@@ -91,7 +91,7 @@ def test_create_author_duplicated_name(client):
 
     response = client.post('/authors', json=data)
     assert response.status_code == 422
-    assert response.json() == {"detail": "Author name already exists"}
+    assert response.json() == {"detail": "DBAuthor name already exists"}
 
 
 def test_update_author():
@@ -128,7 +128,7 @@ def test_create_book_non_existing_author(client):
     book_data = {"title": "Pan Tadeusz", "author_id": 0}
     response = client.post('/books', json=book_data)
     assert response.status_code == 422
-    assert response.json() == {'detail': 'Author not found'}
+    assert response.json() == {'detail': 'DBAuthor not found'}
 
 
 def test_create_book_duplicated_title_same_author(client):
@@ -144,7 +144,7 @@ def test_create_book_duplicated_title_same_author(client):
 
     response = client.post('/books', json=book_data)
     assert response.status_code == 422
-    assert response.json() == {"detail": "Book for this author and tittle alredy exists."}
+    assert response.json() == {"detail": "DBBook for this author and tittle alredy exists."}
 
 
 def test_get_book():
