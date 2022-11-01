@@ -32,20 +32,22 @@ ignore_missing_imports = true
 disallow_untyped_defs = true
 
 [[tool.mypy.overrides]]
-module = "tests.*"
-disallow_untyped_defs = false
-
-[[tool.mypy.overrides]]
-module = "*.tests.*"
+module = [
+    "tests.*",
+    "*.tests.*"
+]
 disallow_untyped_defs = false
 
 [tool.isort]
 line_length = 120
 multi_line_output = 3
+include_trailing_comma = true
 
 [tool.yapf]
-based_on_style = "facebook"
+based_on_style = "pep8"
 column_limit = 120
+split_arguments_when_comma_terminated = true
+dedent_closing_brackets = true
 
 [tool.pytest.ini_options]
 junit_family = "xunit2"

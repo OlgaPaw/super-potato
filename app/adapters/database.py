@@ -1,4 +1,4 @@
-from sqlalchemy import Column, ForeignKey, Integer, String, create_engine
+from sqlalchemy import Column, ForeignKey, Integer, String, UniqueConstraint, create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 from sqlalchemy.orm.decl_api import DeclarativeMeta
@@ -22,9 +22,10 @@ class Author(Base):
 
 class Book(Base):
     __tablename__ = "books"
+    __table_args__ = (UniqueConstraint('title', 'author_id', name='book_author_title_unique'), )
 
     id = Column(Integer, primary_key=True, index=True)
-    title = Column(String, unique=True, index=True)
+    title = Column(String, index=True)
     author_id = Column(Integer, ForeignKey("authors.id"))
 
     author = relationship("Author", back_populates="books")

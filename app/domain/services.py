@@ -1,4 +1,4 @@
-from typing import List
+from typing import Any, List
 
 from pydantic import BaseModel
 from typing_extensions import Protocol
@@ -45,14 +45,19 @@ class RepositoryException(Exception):
 
 
 class BookRepository(Protocol):
+
     def add(self, book: BookCreate) -> Book:
         ...
 
     def list(self) -> List[Book]:
         ...
 
+    def filter(self, **kwargs: Any) -> List[Book]:
+        ...
+
 
 class AuthorRepository(Protocol):
+
     def add(self, author: AuthorCreate) -> Author:
         ...
 
@@ -63,6 +68,9 @@ class AuthorRepository(Protocol):
         ...
 
     def delete(self, pk: int) -> None:
+        ...
+
+    def filter(self, **kwargs: Any) -> List[Author]:
         ...
 
 
@@ -95,10 +103,10 @@ def list_books(book_repository: BookRepository) -> List[Book]:
 def create_book(author_repository: AuthorRepository, book_repository: BookRepository, book: BookAPICreate) -> Book:
     try:
         author = author_repository.get(book.author_id)
+        book_ = BookCreate(title=book.title, author=author)
+        return book_repository.add(book_)
     except RepositoryException as err:
         raise BookCreateException(err) from err
-    book_ = BookCreate(title=book.title, author=author)
-    return book_repository.add(book_)
 
 
 def list_authors(author_repository: AuthorRepository) -> List[Author]:

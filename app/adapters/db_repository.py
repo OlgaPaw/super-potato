@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Any, Dict, List
+from typing import Any, List
 
 from ..domain.services import Author, AuthorCreate
 from ..domain.services import AuthorRepository as AuthorRespositoryBase
@@ -16,7 +16,11 @@ class BaseRepository:
 
 @dataclass
 class BookRepository(BaseRepository, BookRespositoryBase):
+
     def add(self, book: BookCreate) -> Book:
+        if self.filter(title=book.title, author_id=book.author.id):
+            raise RepositoryException("Author name already exists")
+
         book = database.Book(title=book.title, author_id=book.author.id)
         self.database.add(book)
         self.database.commit()
@@ -26,9 +30,13 @@ class BookRepository(BaseRepository, BookRespositoryBase):
     def list(self) -> List[Book]:
         return self.database.query(database.Book).all()
 
+    def filter(self, **kwargs: Any) -> List[Book]:
+        return self.database.query(database.Book).filter_by(**kwargs).all()
+
 
 @dataclass
 class AuthorRepository(BaseRepository, AuthorRespositoryBase):
+
     def add(self, author: AuthorCreate) -> Author:
         author = database.Author(name=author.name)
         if self.filter(name=author.name):
@@ -41,7 +49,7 @@ class AuthorRepository(BaseRepository, AuthorRespositoryBase):
     def list(self) -> List[Author]:
         return self.database.query(database.Author).all()
 
-    def filter(self, **kwargs: Dict[str, Any]) -> List[Author]:
+    def filter(self, **kwargs: Any) -> List[Author]:
         return self.database.query(database.Author).filter_by(**kwargs).all()
 
     def get(self, pk: int) -> Author:

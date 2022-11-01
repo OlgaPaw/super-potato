@@ -123,5 +123,17 @@ def test_create_book_non_existing_author(client):
     assert response.json() == {'detail': 'Author not found'}
 
 
-def test_create_book_duplicated_title():
-    pass
+def test_create_book_duplicated_title_same_author(client):
+    author_data = {"name": "Adam Mickiewicz"}
+    response = client.post('/authors', json=author_data)
+    assert response.status_code == 200
+    author_id = response.json()['id']
+
+    book_data = {"title": "Pan Tadeusz", "author_id": author_id}
+    response = client.post('/books', json=book_data)
+    assert response.status_code == 200
+    assert response.json() == {"id": 0, "title": "Pan Tadeusz", "author": {"name": "Adam Mickiewicz", "id": author_id}}
+
+    response = client.post('/books', json=book_data)
+    assert response.status_code == 422
+    assert response.json() == {"detail": "Book for this author and tittle alredy exists."}

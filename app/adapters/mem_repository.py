@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+from typing import Any, List
 
 from ..domain.services import Author, AuthorCreate
 from ..domain.services import AuthorRepository as AuthorRespositoryBase
@@ -14,11 +15,19 @@ class BookRepository(BookRespositoryBase):
     def add(self, book: BookCreate) -> Book:
         max_id = len(self.books)
         book_ = Book(id=max_id, title=book.title, author=book.author)
+        if self.filter(title=book.title, author=book.author):
+            raise RepositoryException("Book for this author and tittle alredy exists.")
         self.books[max_id] = book_
         return book_
 
-    def list(self) -> list[Book]:
+    def list(self) -> List[Book]:
         return list(self.books.values())
+
+    def filter(self, **kwargs: Any) -> List[Book]:
+        return [
+            book for book in self.books.values()
+            if all(getattr(book, key, None) == value for key, value in kwargs.items())
+        ]
 
 
 @dataclass
@@ -32,7 +41,7 @@ class AuthorRepository(AuthorRespositoryBase):
         self.authors[max_id] = Author(name=author.name, id=max_id)
         return self.authors[max_id]
 
-    def list(self) -> list[Author]:
+    def list(self) -> List[Author]:
         return list(self.authors.values())
 
     def get(self, pk: int) -> Author:
@@ -44,3 +53,9 @@ class AuthorRepository(AuthorRespositoryBase):
     def delete(self, pk: int) -> None:
         author = self.get(pk)
         del self.authors[author.id]
+
+    def filter(self, **kwargs: Any) -> List[Author]:
+        return [
+            author for author in self.authors.values()
+            if all(getattr(author, key, None) == value for key, value in kwargs.items())
+        ]

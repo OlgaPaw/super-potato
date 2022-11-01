@@ -101,3 +101,66 @@ def test_create_book(author_repo, book_repo):
     book = BookCreate(title='Balladyna', author=db_author)
     book_repo.add(book)
     assert len(book_repo.list()) == 1
+
+
+@pytest.mark.parametrize(
+    'author_repo, book_repo', [
+        ('db_author_repo', 'db_book_repo'),
+        ('mem_author_repo', 'mem_book_repo'),
+    ],
+    indirect=True
+)
+def test_create_book_duplicated_author_title_not_allowed(author_repo, book_repo):
+    author = AuthorCreate(name="Juliusz Słowacki")
+    db_author = author_repo.add(author)
+
+    book = BookCreate(title='Balladyna', author=db_author)
+    book_repo.add(book)
+    assert len(book_repo.list()) == 1
+
+    book = BookCreate(title='Balladyna', author=db_author)
+    with pytest.raises(RepositoryException):
+        book_repo.add(book)
+
+
+@pytest.mark.parametrize(
+    'author_repo, book_repo', [
+        ('db_author_repo', 'db_book_repo'),
+        ('mem_author_repo', 'mem_book_repo'),
+    ],
+    indirect=True
+)
+def test_create_book_same_title_different_author_allowed(author_repo, book_repo):
+    author = AuthorCreate(name="Juliusz Słowacki")
+    db_author = author_repo.add(author)
+
+    book = BookCreate(title='Balladyna', author=db_author)
+    book_repo.add(book)
+    assert len(book_repo.list()) == 1
+
+    author = AuthorCreate(name="Adam Mickiewicz")
+    db_author = author_repo.add(author)
+
+    book = BookCreate(title='Balladyna', author=db_author)
+    book_repo.add(book)
+    assert len(book_repo.list()) == 2
+
+
+@pytest.mark.parametrize(
+    'author_repo, book_repo', [
+        ('db_author_repo', 'db_book_repo'),
+        ('mem_author_repo', 'mem_book_repo'),
+    ],
+    indirect=True
+)
+def test_create_book_same_author_different_tittle_allowed(author_repo, book_repo):
+    author = AuthorCreate(name="Juliusz Słowacki")
+    db_author = author_repo.add(author)
+
+    book = BookCreate(title='Balladyna 1', author=db_author)
+    book_repo.add(book)
+    assert len(book_repo.list()) == 1
+
+    book = BookCreate(title='Balladyna 2', author=db_author)
+    book_repo.add(book)
+    assert len(book_repo.list()) == 2
