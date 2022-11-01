@@ -1,3 +1,17 @@
+REST API demo
+=============
+
+The purpose of the project is to demonstrate simple REST API, based on 2 resources: books and authors.
+
+
+It's also done to practise the Clean Architecture style, which might look overcomplicated for a simple CRUD application.
+
+The logic is concentrated in `domain` directory, while `adapters` contains the different methods for storing the data.
+
+In future I'll try to add another API interface, e.g. based on `Flask` or `Django Rest Framework`, to compare dirrefent approaches.
+The current API is done in the `FastAPI` framework.
+
+
 Run
 ===
 
